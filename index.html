@@ -50,10 +50,11 @@
         let combinedMarkdown = "";
         let fileCount = 0;
 
-        // Encontra todos os arquivos que terminam com .md dentro do ZIP
+        // 1. Encontra todos os arquivos que terminam com .md dentro do ZIP
         const mdFiles = Object.keys(zip.files)
           .filter(name => name.endsWith('.md'))
-          .sort(); // Ordena alfabeticamente para manter a organização
+          // 2. Aplica a ordenação natural (reconhece números em capítulos e páginas)
+          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
         for (const fileName of mdFiles) {
           // Lê o conteúdo do arquivo .md como texto
@@ -75,7 +76,7 @@
         // Cria o arquivo final para download
         const blob = new Blob([combinedMarkdown], { type: "text/markdown;charset=utf-8" });
         const link = document.createElement("a");
-        link.href = URL.URL ? URL.createObjectURL(blob) : window.webkitURL.createObjectURL(blob);
+        link.href = URL.createObjectURL ? URL.createObjectURL(blob) : window.webkitURL.createObjectURL(blob);
         link.download = "sistema_completo.md";
         link.click();
 
